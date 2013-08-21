@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<unitDefinition>
+	<unit>
+		<symbol></symbol>
+		<convFactor></convFactor>
+		<convOffset></convOffset>
+		<dimension></dimension>
+		<key></key>
+	</unit>
+</unitDefinition>
