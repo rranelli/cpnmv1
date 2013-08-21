@@ -21,7 +21,7 @@ Public Const trackingChar                         As String = "Z"
 Public Const calcChar                             As String = "C"
 Public Const breakString                          As String = "dummy"
 Public Const calculatedPropClassKey               As Integer = 5
-Public Const nonExistantValueString               As String = "Valor Não Cadastrado"
+Public Const nonExistantValueString               As String = "-"
 
 Public Function isInCollection(col As collection, key As String) As Boolean
     '=======================================================================================
@@ -91,11 +91,13 @@ Public Function defineDatabaseConnection(Optional promptOption As Integer = 1) A
     Set cnn = New ADODB.Connection
 
     strConnect = "Provider=SQLNCLI10;" _
-               & "Server=WSP-I02-V; " _
                & "Database=CHT-CPNM;" _
+               & "Server=WSP-I02-V; " _
                & "DataTypeCompatibility=80;" _
                & "Integrated Security = SSPI;" _
                & "MARS Connection=True;"
+
+    
 
     cnn.ConnectionString = strConnect
     Set defineDatabaseConnection = cnn

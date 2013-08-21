@@ -23,7 +23,7 @@ Public Function convertValue(strValue As String, propKey As Long, _
 '=======================================================================================
 ' conversão de um valor de ou para o SI.
 '---------------------------------------------------------------------------------------
-' [valueSI] - Se TRUE, converte strValue do SI para a unidade dada em unitKey (import)
+' [bolImporting] - Se TRUE, converte strValue do SI para a unidade dada em unitKey (import)
 '           - Se FALSE, converte strValue da unidade dada em unitKey para o SI (export)
 '---------------------------------------------------------------------------------------
 ' A conversão funciona da seguinte forma.
@@ -43,6 +43,7 @@ Public Function convertValue(strValue As String, propKey As Long, _
     Dim convertedValue   As Variant
     Dim dblValue         As Double
     Dim unitSymbol       As String
+    Dim thisFormat As String
 
     On Error GoTo convertValue_Error
     ' getting the dimension key
@@ -53,7 +54,8 @@ Public Function convertValue(strValue As String, propKey As Long, _
 
         convFactor = getConvFactor(propKey, unitKey)
         offsetFactor = getOffsetFactor(propKey, unitKey)
-
+        thisFormat = getFormat(propKey, unitKey)
+        
         dblValue = CDbl(strValue)
         unitSymbol = getUnitSymbol(propKey, unitKey)
 
@@ -66,16 +68,14 @@ Public Function convertValue(strValue As String, propKey As Long, _
         convertedValue = strValue
     End If
 
-    convertValue = Format(CStr(convertedValue), "standard")
+    convertValue = Format(CStr(convertedValue), thisFormat)
 
     On Error GoTo 0
 
     GoTo convertValue_Finally
-
 convertValue_Finally:
-
     Exit Function
-
+    
     ' Procedure Error Handler
 convertValue_Error:
     Dim errorAction      As Integer
@@ -139,6 +139,17 @@ Private Function getOffsetFactor(propKey As Long, unitKey As Long) As Double
     End If
 End Function
 
+Private Function getFormat(propKey As Long, unitKey As Long) As String
+    Dim tempUnit         As unit
+
+    If unitKey <> 0 Then
+        Set tempUnit = getUnitObjectFromKeys(propKey, unitKey)
+        If Not tempUnit Is Nothing Then getFormat = tempUnit.numFormat
+    Else
+        getFormat = "Standard"
+    End If
+End Function
+
 Public Property Get getUnitSymbol(propKey As Long, unitKey As Long) As String
     Dim tempUnit         As unit
 
@@ -197,6 +208,7 @@ Private Function getUnitsCollectionFromXML(Optional redefPaths As Boolean = Fals
         tempUnit.convOffset = CDbl(unitList.Item(itemIndex).SelectSingleNode("convOffset").Text)
         tempUnit.dimension = CInt(unitList.Item(itemIndex).SelectSingleNode("dimension").Text)
         tempUnit.key = CLng(unitList.Item(itemIndex).SelectSingleNode("key").Text)
+        tempUnit.numFormat = CStr(unitList.Item(itemIndex).SelectSingleNode("numFormat").Text)
 
         unitCol.Add Item:=tempUnit, key:=tempUnit.dimension & "|" & tempUnit.key
 

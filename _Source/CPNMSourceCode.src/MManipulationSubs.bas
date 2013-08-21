@@ -45,6 +45,11 @@ Public Sub exportSingleDataFromKeys(itemKey As Long, propKey As Long, _
 
     ' Now I trim the value
     strInsertValue = Trim(strInsertValue)
+    
+    On Error Resume Next
+    strInsertValue = Format(CDbl(strInsertValue), "Scientific")
+    On Error GoTo 0
+    
     If unitKey <> 0 Then                                             'Will convert the value ONLY if there is a unit to convert to.
         strInsertValue = gUnitDef.convertValue(strInsertValue, propKey, unitKey, False)
     End If

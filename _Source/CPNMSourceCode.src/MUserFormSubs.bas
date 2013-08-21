@@ -598,3 +598,16 @@ Public Sub createXref(itemTypeKey As Long, propKey As Long)
     strSQL = "insert into [CHT-CPNM].[dbo].[PROPRIEDADES_ITEMS](ID_TIPO_ITEM, ID_TIPO_PROP) values(" & itemTypeKey & "," & propKey & ");"
     gCnn.Execute strSQL
 End Sub
+
+Public Function GetAllProperties(itemKey As Long)
+    Dim rs As ADODB.Recordset
+    Dim strSQL As String
+        Dim itemTypeKey As Long
+        
+    Set rs = New ADODB.Record
+    itemTypeKey = getItemTypeFromItemKey(itemKey)
+    strSQL = "select ID_TIPO_PROP from PROPRIEDADES_ITEMS where ID_TIPO_ITEM = " & itemTypeKey
+    rs.Open strSQL, gCnn
+    
+    Set GetAllProperties = rs
+End Function

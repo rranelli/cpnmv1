@@ -7,8 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public dimension         As Integer
-Public key               As Long
-Public convFactor        As Double
-Public convOffset        As Double
-Public symbol            As String
+Public dimension                                  As Integer
+Public key                                        As Long
+Public convFactor                                 As Double
+Public convOffset                                 As Double
+Public symbol                                     As String
+Public numFormat                                  As String

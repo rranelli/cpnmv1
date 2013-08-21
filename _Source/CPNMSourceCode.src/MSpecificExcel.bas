@@ -102,7 +102,7 @@ Private Sub getRangeVarsFromDatabase(Optional showMsgBoxes As Boolean = True)
             valueToRangeVar = getData(rangeVarz.Name)
 
             ' Getting the value into the docvar
-            rangeVarz.RefersTo = "='" & valueToRangeVar & "'"     ' veja [*] na observação
+            rangeVarz.RefersTo = "=" & Chr(34) & valueToRangeVar & Chr(34)    ' veja [*] na observação
 
             ' Checking if the value returned was null
             If InStr(valueToRangeVar, "Erro!") Then
