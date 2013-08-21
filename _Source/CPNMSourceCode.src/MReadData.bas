@@ -214,11 +214,11 @@ Private Function getCalculatedDataFromDB(itemKey As Long, propKey As Long) As St
     strPartial = ""
 
     Select Case propKey                                              'Aqui eu faço a verificação dos casos especiais de propKeys
-        Case 60                                                      'Tag da linha
-            strPartial = getDataFromDB(itemKey, 46, 0, 1)
+        Case 519                                                      'Tag da linha
+            'strPartial = getDataFromDB(itemKey, 46, 0, 1)
             'strPartial = strPartial & "-" & getDataFromDB(itemKey, 61, 0, 1)
-            strPartial = strPartial & "-" & getTrackingDataFromDB(itemKey, "NOME_ITEM")
-            strPartial = strPartial & "-" & getDataFromDB(itemKey, 38, 0, 1)
+            strPartial = getTrackingDataFromDB(itemKey, "NOME_ITEM")
+            'strPartial = strPartial & "-" & getDataFromDB(itemKey, 38, 0, 1)
 
     End Select
 

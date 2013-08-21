@@ -19,12 +19,14 @@ Private Const startingColumn                      As Long = 3
 Private Const startingRow                         As Long = 6
 
 Public Sub uploadDataWithTimer()
+    Call wrapSetUpConnection
+    
     Dim myTimer                                   As obTimer
     Set myTimer = New obTimer
 
     ' Abrindo a conexão com o banco de dados.
     Set gCnn = defineDatabaseConnection(-1)
-    Call createGlobalUnitDefinitionObject
+    'Call createGlobalUnitDefinitionObject
 
     On Error Resume Next
     gCnn.Open
@@ -159,7 +161,8 @@ uploadDataToDatabase_Error:
 End Sub
 
 Public Sub importDataWithTimer()
-
+    Call wrapSetUpConnection
+    
     Dim myTimer                                   As obTimer
     Set myTimer = New obTimer
 
@@ -245,7 +248,8 @@ End Sub
 
 Public Sub deleteRow()
     ' This sub deletes the row of the item
-
+    Call wrapSetUpConnection
+    
     Dim confirm                                   As Variant
 
     ' checking if he can actually delete this line
@@ -367,7 +371,9 @@ Public Sub dumpItemsByType()
     itemTypeKey = getItemTypeKey(itemTypeName)
 
     Set rs = New Recordset
-    strSQL = "select ID_ITEM, NOME_ITEM from ITEM where ID_TIPO_ITEM = " & itemTypeKey
+    strSQL = "select [CHT-CPNM].[dbo].[ITEM].[ID_ITEM], [CHT-CPNM].[dbo].[ITEM].[NOME_ITEM] from [CHT-CPNM].[dbo].[ITEM] " & _
+    " where [CHT-CPNM].[dbo].[ITEM].[ID_TIPO_ITEM] = " & itemTypeKey & " AND [CHT-CPNM].[dbo].[ITEM].[ID_SUB_ARE] = " & getSubAreaKey(Cells(1, 3).value)
+    
     rs.Open strSQL, gCnn
 
     row = startingRow
@@ -380,6 +386,8 @@ Public Sub dumpItemsByType()
 End Sub
 
 Public Sub dumpInstrumentos()
+    Call wrapSetUpConnection
+    
     Dim rs                                        As Recordset
     Dim strSQL                                    As String
     Dim row                                       As Integer
@@ -387,7 +395,7 @@ Public Sub dumpInstrumentos()
     Dim itemTypeKey                               As Long
 
     Set rs = New Recordset
-    strSQL = "select ID_ITEM, NOME_ITEM from ITEM inner join TIPO_ITEM on ITEM.ID_TIPO_ITEM = TIPO_ITEM.ID_TIPO_ITEM where ID_CLASSE_TIPO_ITEM = 3"    '3 é a chave da classe instrumentos
+    strSQL = "select ID_ITEM, NOME_ITEM from ITEM inner join TIPO_ITEM on ITEM.ID_TIPO_ITEM = TIPO_ITEM.ID_TIPO_ITEM where ID_CLASSE_TIPO_ITEM = 2"    '2 é a chave da classe instrumentos
     rs.Open strSQL, gCnn
     row = startingRow
 
