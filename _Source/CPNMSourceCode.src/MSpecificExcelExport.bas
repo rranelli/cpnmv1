@@ -179,9 +179,11 @@ Public Sub importDataWithTimer()
 
     On Error GoTo 0
     ' Running the upload task
+    Application.ScreenUpdating = False
     myTimer.StartTimer
     Call importDataFromDatabase
     myTimer.StopTimer
+    Application.ScreenUpdating = True
 
     MsgBox " Importação realizada com sucesso!Tempo decorrido para exportação:" & myTimer.Elapsed
 
@@ -207,7 +209,7 @@ Private Sub importDataFromDatabase()
 
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
-
+    
     Do While Cells(r, itemColumn).Formula <> Empty                   ' repeat until first empty cell in column c
         Do While Cells(propRow, c).Formula <> Empty                  ' repeat until first empty cell in row r
             ' Getting Information for data export
@@ -228,6 +230,7 @@ Private Sub importDataFromDatabase()
             If Err = 0 Then
                 If itemKey <> Cells(r, 1).value Then
                     MsgBox "O nome do seu item " & strItemName & " não corresponde à chave primaria guardada"
+                    
                     Exit Sub
                 End If
 
@@ -425,7 +428,7 @@ Public Sub runDiagnose()
     Dim thisPropName                              As String
     Dim thisItemTypeName                          As String
     Dim strLog                                    As String
-    Dim uploadDic                                 As dictionary
+    Dim uploadDic                                 As Dictionary
     Dim varWorksheet                              As Variant
     Dim splitz                                    As Variant
     Dim startRow                                  As Integer
@@ -437,7 +440,7 @@ Public Sub runDiagnose()
     itemTypeCol = 5
     reportRowStart = 7
 
-    Set uploadDic = New dictionary
+    Set uploadDic = New Dictionary
     Call initializeCPNM
 
     folderPath = displayFolderOpen("Selecione a pasta com as planilhas de origem dos dados", ActiveWorkbook.Path)

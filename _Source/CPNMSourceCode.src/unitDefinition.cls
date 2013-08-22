@@ -208,7 +208,7 @@ Private Function getUnitsCollectionFromXML(Optional redefPaths As Boolean = Fals
         tempUnit.convOffset = CDbl(unitList.Item(itemIndex).SelectSingleNode("convOffset").Text)
         tempUnit.dimension = CInt(unitList.Item(itemIndex).SelectSingleNode("dimension").Text)
         tempUnit.key = CLng(unitList.Item(itemIndex).SelectSingleNode("key").Text)
-        tempUnit.numFormat = CStr(unitList.Item(itemIndex).SelectSingleNode("numFormat").Text)
+        'tempUnit.numFormat = CStr(unitList.Item(itemIndex).SelectSingleNode("numFormat").Text)
 
         unitCol.Add Item:=tempUnit, key:=tempUnit.dimension & "|" & tempUnit.key
 

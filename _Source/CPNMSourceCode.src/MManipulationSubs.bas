@@ -15,10 +15,10 @@ Option Explicit
 Public Sub exportSingleData(strItemName As String, strPropName As String, _
                             strInsertValue As String, strInsertUnit As String, Optional bolAskForConf As Boolean = False)
 
-    ' Declarations
-    Dim itemKey                                   As Long
-    Dim propKey                                   As Long
-    Dim unitKey                                   As Long
+' Declarations
+    Dim itemKey                    As Long
+    Dim propKey                    As Long
+    Dim unitKey                    As Long
 
     itemKey = getItemKey(strItemName)
     propKey = getPropKey(strPropName)
@@ -29,14 +29,14 @@ End Sub
 
 Public Sub exportSingleDataFromKeys(itemKey As Long, propKey As Long, _
                                     strInsertValue As String, unitKey As Long, Optional bolAskForConf As Boolean = False)
-    ' Declarations
-    Dim rs                                        As ADODB.Recordset
-    Dim varResponse                               As Variant
-    Dim valueExistance                            As Boolean
-    Dim strCommand                                As String
-    Dim idValueJustInserted                       As Long
-    Dim strConfirmString                          As String
-    Dim valueKey                                  As Long
+' Declarations
+    Dim rs                         As ADODB.Recordset
+    Dim varResponse                As Variant
+    Dim valueExistance             As Boolean
+    Dim strCommand                 As String
+    Dim idValueJustInserted        As Long
+    Dim strConfirmString           As String
+    Dim valueKey                   As Long
 
     On Error GoTo exportSingleData_Error
 
@@ -45,11 +45,11 @@ Public Sub exportSingleDataFromKeys(itemKey As Long, propKey As Long, _
 
     ' Now I trim the value
     strInsertValue = Trim(strInsertValue)
-    
+
     On Error Resume Next
     strInsertValue = Format(CDbl(strInsertValue), "Scientific")
     On Error GoTo 0
-    
+
     If unitKey <> 0 Then                                             'Will convert the value ONLY if there is a unit to convert to.
         strInsertValue = gUnitDef.convertValue(strInsertValue, propKey, unitKey, False)
     End If
@@ -60,7 +60,7 @@ Public Sub exportSingleDataFromKeys(itemKey As Long, propKey As Long, _
     If valueExistance = False Then
         'Now, we are free to insert the value into the VLUE table
         strCommand = "insert into [CHT-CPNM].[dbo].[VALOR_PROPRIEDADES](VALOR_PROP)" & _
-                   " values('" & strInsertValue & "')"
+                     " values('" & strInsertValue & "')"
 
         ' Executing the thing
         gCnn.Execute (strCommand)
@@ -93,8 +93,8 @@ Public Sub exportSingleDataFromKeys(itemKey As Long, propKey As Long, _
 
             ' Creating the sql command to UPDATE the registry
             strCommand = "update VALOR_PROPRIEDADES " & _
-                       " set VALOR_PROP = '" & strInsertValue & "'" & _
-                       " where ID_VALOR = " & valueKey
+                         " set VALOR_PROP = '" & strInsertValue & "'" & _
+                         " where ID_VALOR = " & valueKey
             ' Executing the thing =)
             gCnn.Execute (strCommand)
         End If
@@ -108,13 +108,13 @@ exportSingleData_Error:
 End Sub
 
 Public Sub changeTrackingData(strItemName, strPropNameTrack, strNewValue)
-    ' Declarations
-    Dim rs                                        As ADODB.Recordset
-    Dim strSQL                                    As String
-    Dim colDictionary                             As collection
-    Dim itemKey                                   As Long
-    Dim propTrackKey                              As String
-    Dim bigSelect                                 As String
+' Declarations
+    Dim rs                         As ADODB.Recordset
+    Dim strSQL                     As String
+    Dim colDictionary              As collection
+    Dim itemKey                    As Long
+    Dim propTrackKey               As String
+    Dim bigSelect                  As String
 
 
     On Error GoTo changeTrackingData_Error
@@ -131,13 +131,13 @@ Public Sub changeTrackingData(strItemName, strPropNameTrack, strNewValue)
 
     ' Now, this is the MONSTER QUERY
     bigSelect = "select ITEM.NOME_ITEM, SUB_AREA.NOME_SUB_ARE, AREA.NOME_ARE, PLANTA.NOME_PLA, INDUSTRIAL.NOME_IND, UNIDADE_NEGOCIO.NOME_UNI " & _
-              " from UNIDADE_NEGOCIO INNER JOIN ((((INDUSTRIAL INNER JOIN PLANTA ON INDUSTRIAL.ID_IND = PLANTA.ID_IND) INNER JOIN AREA ON " & _
-              " PLANTA.ID_PLA = AREA.ID_PLA) INNER JOIN SUB_AREA ON AREA.ID_ARE = SUB_AREA.ID_ARE) INNER JOIN ITEM ON SUB_AREA.ID_SUB_ARE = ITEM.ID_SUB_ARE) ON UNIDADE_NEGOCIO.ID_UNI = INDUSTRIAL.ID_UNI " & _
-              " where ITEM.ID_ITEM = " & itemKey
+                " from UNIDADE_NEGOCIO INNER JOIN ((((INDUSTRIAL INNER JOIN PLANTA ON INDUSTRIAL.ID_IND = PLANTA.ID_IND) INNER JOIN AREA ON " & _
+                " PLANTA.ID_PLA = AREA.ID_PLA) INNER JOIN SUB_AREA ON AREA.ID_ARE = SUB_AREA.ID_ARE) INNER JOIN ITEM ON SUB_AREA.ID_SUB_ARE = ITEM.ID_SUB_ARE) ON UNIDADE_NEGOCIO.ID_UNI = INDUSTRIAL.ID_UNI " & _
+                " where ITEM.ID_ITEM = " & itemKey
 
     ' The update command
     strSQL = "update (" & bigSelect & ")" & _
-           " set " & propTrackKey & "= '" & strNewValue & "'"
+             " set " & propTrackKey & "= '" & strNewValue & "'"
 
     ' Executing the update command my friend. We are done.
     gCnn.Execute strSQL
@@ -151,14 +151,13 @@ changeTrackingData_Error:
     Call handleMyError
 End Sub
 
-
 Public Sub createItem(strItemName As String, strItemType As String, strSubArea As String)
-    ' Declarations
-    Dim subAreaKey                                As String
-    Dim itemTypeKey                               As Long
-    Dim itemExistance                             As Boolean
-    Dim strCommand                                As String
-    Dim strConfirmString                          As String
+' Declarations
+    Dim subAreaKey                 As String
+    Dim itemTypeKey                As Long
+    Dim itemExistance              As Boolean
+    Dim strCommand                 As String
+    Dim strConfirmString           As String
 
     ' Checking if the item already exists
     On Error GoTo createItem_Error
@@ -190,12 +189,12 @@ createItem_Error:
 End Sub
 
 Sub createSharing(strItemName1 As String, strPropName1 As String, strItemName2 As String, strPropName2 As String)
-    ' Essa rotina é um wrapper
+' Essa rotina é um wrapper
 
-    Dim itemKey1                                  As Long
-    Dim itemKey2                                  As Long
-    Dim propKey1                                  As Long
-    Dim propKey2                                  As Long
+    Dim itemKey1                   As Long
+    Dim itemKey2                   As Long
+    Dim propKey1                   As Long
+    Dim propKey2                   As Long
 
     itemKey1 = getItemKey(strItemName1)
     propKey1 = getPropKey(strPropName1)
@@ -206,27 +205,27 @@ Sub createSharing(strItemName1 As String, strPropName1 As String, strItemName2 A
 End Sub
 
 Sub createSharingFromKeys(itemKey1 As Long, propKey1 As Long, itemKey2 As Long, propKey2 As Long)
-    '=======================================================================================
-    ' Essa rotina cria o compartilhamento a partir dos nomes dos items e propriedades
-    '---------------------------------------------------------------------------------------
-    ' [strItemName1] - Nome do primeiro item que entra no compartilhamento
-    ' [strPropName1] - Nome da propriedade do primeiro item para compartilhamento.
-    ' [strItemName2] - Nome do segunda item que entra no compartilhamento
-    ' [strPropName2] - Nome da propriedade do segundo item para compartilhamento.
-    '---------------------------------------------------------------------------------------
-    Dim rs                                        As New ADODB.Recordset
-    Dim strSQL                                    As String
-    Dim value1Exists                              As Boolean
-    Dim value2Exists                              As Boolean
-    Dim valueKey                                  As Long
-    Dim valueKey4deletion                         As Long
-    Dim itemKey4creation                          As Long
-    Dim propKey4creation                          As Long
-    Dim itemKey4change                            As Long
-    Dim propKey4change                            As Long
-    Dim valueKey1                                 As Long
-    Dim valueKey2                                 As Long
-    Dim optionLeft                                As Variant
+'=======================================================================================
+' Essa rotina cria o compartilhamento a partir dos nomes dos items e propriedades
+'---------------------------------------------------------------------------------------
+' [strItemName1] - Nome do primeiro item que entra no compartilhamento
+' [strPropName1] - Nome da propriedade do primeiro item para compartilhamento.
+' [strItemName2] - Nome do segunda item que entra no compartilhamento
+' [strPropName2] - Nome da propriedade do segundo item para compartilhamento.
+'---------------------------------------------------------------------------------------
+    Dim rs                         As New ADODB.Recordset
+    Dim strSQL                     As String
+    Dim value1Exists               As Boolean
+    Dim value2Exists               As Boolean
+    Dim valueKey                   As Long
+    Dim valueKey4deletion          As Long
+    Dim itemKey4creation           As Long
+    Dim propKey4creation           As Long
+    Dim itemKey4change             As Long
+    Dim propKey4change             As Long
+    Dim valueKey1                  As Long
+    Dim valueKey2                  As Long
+    Dim optionLeft                 As Variant
 
     ' And i create the recordset to receive the query
     On Error GoTo createSharingFromKeys_Error
@@ -311,8 +310,8 @@ Sub createSharingFromKeys(itemKey1 As Long, propKey1 As Long, itemKey2 As Long, 
     ' executing the UPDATE statement
     If itemKey4change <> -1 Then
         strSQL = " update LINK_VALORES " & _
-               " set ID_VALOR = " & valueKey & _
-               " where ID_ITEM = " & itemKey4change & " AND ID_TIPO_PROP = " & propKey4change
+                 " set ID_VALOR = " & valueKey & _
+                 " where ID_ITEM = " & itemKey4change & " AND ID_TIPO_PROP = " & propKey4change
 
         gCnn.Execute (strSQL)
     End If
@@ -320,7 +319,7 @@ Sub createSharingFromKeys(itemKey1 As Long, propKey1 As Long, itemKey2 As Long, 
     ' executing the INSERTION statement
     If itemKey4creation <> -1 Then
         strSQL = " insert into LINK_VALORES(ID_ITEM,ID_TIPO_PROP,ID_VALOR) " & _
-               " values (" & itemKey4creation & "," & propKey4creation & "," & valueKey & ")"
+                 " values (" & itemKey4creation & "," & propKey4creation & "," & valueKey & ")"
 
         gCnn.Execute (strSQL)
     End If
@@ -341,34 +340,34 @@ createSharingFromKeys_Finally:
 
     ' Procedure Error Handler
 createSharingFromKeys_Error:
-    Dim errorAction                               As Integer
+    Dim errorAction                As Integer
     'here goes your specific error handling code.
 
     ' here comes the generic global error handling code.
     errorAction = handleMyError()
     Select Case errorAction
-        Case -1
-            Stop
-        Case 1
-            Resume Next
-        Case 2
-            GoTo createSharingFromKeys_Finally
-        Case Else
-            Stop
+    Case -1
+        Stop
+    Case 1
+        Resume Next
+    Case 2
+        GoTo createSharingFromKeys_Finally
+    Case Else
+        Stop
     End Select
 End Sub
 
 Sub breakSharing(strItemName1 As String, strPropName1 As String, strItemName2 As String, strPropName2 As String)
-    ' Declarations
-    Dim rs                                        As New ADODB.Recordset
-    Dim strSQL                                    As String
-    Dim itemKey1                                  As Long
-    Dim itemKey2                                  As Long
-    Dim propKey1                                  As Long
-    Dim propKey2                                  As Long
-    Dim valueKey                                  As Long
-    Dim valueShared                               As String
-    Dim idValueJustInserted                       As Long
+' Declarations
+    Dim rs                         As New ADODB.Recordset
+    Dim strSQL                     As String
+    Dim itemKey1                   As Long
+    Dim itemKey2                   As Long
+    Dim propKey1                   As Long
+    Dim propKey2                   As Long
+    Dim valueKey                   As Long
+    Dim valueShared                As String
+    Dim idValueJustInserted        As Long
 
     ' And i create the recordset to receive the query
     Set rs = New ADODB.Recordset
@@ -381,7 +380,7 @@ Sub breakSharing(strItemName1 As String, strPropName1 As String, strItemName2 As
     valueShared = getValue(valueKey)
 
     strSQL = "insert into VALOR_PROPRIEDADES (VALOR_PROP)" & _
-           " values ('" & valueShared & "')"
+             " values ('" & valueShared & "')"
 
     ' executing the command
     gCnn.Execute (strSQL)
@@ -392,8 +391,8 @@ Sub breakSharing(strItemName1 As String, strPropName1 As String, strItemName2 As
 
     ' now, we have to change the break the old references.
     strSQL = "update LINK_VALORES " & _
-           " set ID_VALOR = " & idValueJustInserted & _
-           " where ID_ITEM = " & itemKey2 & " AND ID_TIPO_PROP = " & propKey2
+             " set ID_VALOR = " & idValueJustInserted & _
+             " where ID_ITEM = " & itemKey2 & " AND ID_TIPO_PROP = " & propKey2
 
     ' and now I execute the new value
     gCnn.Execute (strSQL)
@@ -404,8 +403,8 @@ Sub breakSharing(strItemName1 As String, strPropName1 As String, strItemName2 As
 End Sub
 
 Public Sub assertDimensionallity(propKey1 As Long, propKey2 As Long)
-    Dim dimKey1                                   As Long
-    Dim dimKey2                                   As Long
+    Dim dimKey1                    As Long
+    Dim dimKey2                    As Long
 
     dimKey1 = getDimKey(propKey1)
     dimKey2 = getDimKey(propKey2)
@@ -416,8 +415,8 @@ Public Sub assertDimensionallity(propKey1 As Long, propKey2 As Long)
 End Sub
 
 Public Sub createProperty(strPropName As String, strPropClassName As String, strDimName As String, Optional isCalc As Integer = 0)
-    Dim rs                                        As ADODB.Recordset
-    Dim strSQL                                    As String
+    Dim rs                         As ADODB.Recordset
+    Dim strSQL                     As String
 
     Set rs = New ADODB.Recordset
     rs.CursorLocation = adUseClient
@@ -431,8 +430,8 @@ Public Sub createProperty(strPropName As String, strPropClassName As String, str
 End Sub
 
 Public Sub createItemType(strItemTypeName As String, strItemTypeClassName As String)
-    Dim rs                                        As ADODB.Recordset
-    Dim strSQL                                    As String
+    Dim rs                         As ADODB.Recordset
+    Dim strSQL                     As String
 
     Set rs = New ADODB.Recordset
     rs.CursorLocation = adUseClient
@@ -441,4 +440,35 @@ Public Sub createItemType(strItemTypeName As String, strItemTypeClassName As Str
         strSQL = "INSERT INTO [CHT-CPNM].[dbo].[TIPO_ITEM](NOME_TIPO_ITEM, ID_CLASSE_TIPO_ITEM) values ('" & strItemTypeName & "'," & getItemClassKey(strItemTypeClassName) & ")"
         gCnn.Execute strSQL
     End If
+End Sub
+
+Public Sub changeItemType(itemName As String, newItemTypeName As String)
+    Dim strSQL                     As String
+    Dim newItemTypeKey             As Long
+
+    If newItemTypeName <> "" Then
+        newItemTypeKey = getItemTypeKey(newItemTypeName)
+        strSQL = "UPDATE ITEM SET ID_TIPO_ITEM = " & newItemTypeKey & " where NOME_ITEM = '" & itemName & "';"
+
+        gCnn.Execute strSQL
+    End If
+End Sub
+
+Public Sub changeItemName(itemName As String, newItemName As String)
+    Dim strSQL                     As String
+
+    If newItemName <> "" Then
+        strSQL = "UPDATE ITEM set NOME_ITEM = '" & newItemName & "' where NOME_ITEM = '" & itemName & "';"
+
+        gCnn.Execute strSQL
+    End If
+End Sub
+
+Public Sub changeItemActiveStatus(itemName As String, IsActive As Integer)
+    Dim activeStatus               As Integer
+    Dim strSQL                     As String
+
+    strSQL = "UPDATE ITEM SET ATIVO = " & IsActive & " where NOME_ITEM = '" & itemName & "';"
+
+    gCnn.Execute strSQL
 End Sub
