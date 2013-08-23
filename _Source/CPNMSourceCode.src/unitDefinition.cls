@@ -7,8 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Private Const cstIgnoreConvertionNA As String = "*N/A*"
+Private Const cstIgnoreConvertionHOLD As String = "*HOLD*"
+Private Const cstIgnoreConvertionNOTE As String = "*NOTA*"
+
 Option Explicit
-Public pUnitCollection   As collection
+Public pUnitCollection             As collection
 
 Private Sub class_initialize()
     Set Me.pUnitCollection = getUnitsCollectionFromXML()
@@ -37,68 +41,75 @@ Public Function convertValue(strValue As String, propKey As Long, _
 ' Esse método Só vai funcionar corretamente se o separador de decimal do seu sistema for a virgula. (padrão br)
 '#############################
 
-    Dim convFactor       As Double
-    Dim offsetFactor     As Double
-    Dim dimKey           As Long
-    Dim convertedValue   As Variant
-    Dim dblValue         As Double
-    Dim unitSymbol       As String
-    Dim thisFormat As String
+    Dim convFactor                 As Double
+    Dim offsetFactor               As Double
+    Dim dimKey                     As Long
+    Dim convertedValue             As Variant
+    Dim dblValue                   As Double
+    Dim unitSymbol                 As String
+    Dim thisFormat                 As String
 
-    On Error GoTo convertValue_Error
-    ' getting the dimension key
-    dimKey = getDimKey(propKey)
+    If Not strValue Like cstIgnoreConvertionNA And _
+       Not strValue Like cstIgnoreConvertionHOLD And _
+       Not strValue Like cstIgnoreConvertionNOTE Then
 
-    If unitKey <> 0 And dimKey <> 0 Then
-        ' with the dimension key, i get the dictionary with the conversion factors.
+        On Error GoTo convertValue_Error
+        ' getting the dimension key
+        dimKey = getDimKey(propKey)
 
-        convFactor = getConvFactor(propKey, unitKey)
-        offsetFactor = getOffsetFactor(propKey, unitKey)
-        thisFormat = getFormat(propKey, unitKey)
-        
-        dblValue = CDbl(strValue)
-        unitSymbol = getUnitSymbol(propKey, unitKey)
+        If unitKey <> 0 And dimKey <> 0 Then
+            ' with the dimension key, i get the dictionary with the conversion factors.
 
-        If bolImporting Then                                         'So, dblValue is IN SI.
-            convertedValue = (dblValue - offsetFactor) / convFactor
-        Else                                                         'So, dblValue is NOT IN SI
-            convertedValue = dblValue * convFactor + offsetFactor
+            convFactor = getConvFactor(propKey, unitKey)
+            offsetFactor = getOffsetFactor(propKey, unitKey)
+            thisFormat = getFormat(propKey, unitKey)
+
+            dblValue = CDbl(strValue)
+            unitSymbol = getUnitSymbol(propKey, unitKey)
+
+            If bolImporting Then                                         'So, dblValue is IN SI.
+                convertedValue = (dblValue - offsetFactor) / convFactor
+            Else                                                         'So, dblValue is NOT IN SI
+                convertedValue = dblValue * convFactor + offsetFactor
+            End If
+        Else
+            convertedValue = strValue
         End If
+
+        convertValue = Format(CStr(convertedValue), thisFormat)
+
+        On Error GoTo 0
+
     Else
-        convertedValue = strValue
+        convertValue = strValue
     End If
-
-    convertValue = Format(CStr(convertedValue), thisFormat)
-
-    On Error GoTo 0
-
     GoTo convertValue_Finally
 convertValue_Finally:
     Exit Function
-    
+
     ' Procedure Error Handler
 convertValue_Error:
-    Dim errorAction      As Integer
+    Dim errorAction                As Integer
     'here goes your specific error handling code.
 
     ' here comes the generic global error handling code.
     errorAction = handleMyError()
     Select Case errorAction
-        Case -1
-            Resume Next
-        Case 1
-            Resume Next
-        Case 2
-            GoTo convertValue_Finally
-        Case Else
-            Stop
+    Case -1
+        Resume Next
+    Case 1
+        Resume Next
+    Case 2
+        GoTo convertValue_Finally
+    Case Else
+        Stop
     End Select
 End Function
 
 Public Property Get getUnitKey(strPropName As String, strUnitSymbol As String) As Long
-    Dim tempUnit         As unit
-    Dim propKey          As Long
-    Dim dimKey           As Long
+    Dim tempUnit                   As unit
+    Dim propKey                    As Long
+    Dim dimKey                     As Long
 
     propKey = getPropKey(strPropName)
     dimKey = getDimKey(propKey)
@@ -118,7 +129,7 @@ Public Property Get getUnitKey(strPropName As String, strUnitSymbol As String) A
 End Property
 
 Private Function getConvFactor(propKey As Long, unitKey As Long) As Double
-    Dim tempUnit         As unit
+    Dim tempUnit                   As unit
 
     If unitKey <> 0 Then
         Set tempUnit = getUnitObjectFromKeys(propKey, unitKey)
@@ -129,7 +140,7 @@ Private Function getConvFactor(propKey As Long, unitKey As Long) As Double
 End Function
 
 Private Function getOffsetFactor(propKey As Long, unitKey As Long) As Double
-    Dim tempUnit         As unit
+    Dim tempUnit                   As unit
 
     If unitKey <> 0 Then
         Set tempUnit = getUnitObjectFromKeys(propKey, unitKey)
@@ -140,7 +151,7 @@ Private Function getOffsetFactor(propKey As Long, unitKey As Long) As Double
 End Function
 
 Private Function getFormat(propKey As Long, unitKey As Long) As String
-    Dim tempUnit         As unit
+    Dim tempUnit                   As unit
 
     If unitKey <> 0 Then
         Set tempUnit = getUnitObjectFromKeys(propKey, unitKey)
@@ -151,7 +162,7 @@ Private Function getFormat(propKey As Long, unitKey As Long) As String
 End Function
 
 Public Property Get getUnitSymbol(propKey As Long, unitKey As Long) As String
-    Dim tempUnit         As unit
+    Dim tempUnit                   As unit
 
     If unitKey <> 0 Then
         Set tempUnit = getUnitObjectFromKeys(propKey, unitKey)
@@ -165,9 +176,9 @@ End Property
 ' Privates
 
 Private Function getUnitObjectFromKeys(propKey As Long, unitKey As Long) As unit
-    Dim dimKey           As Long
-    Dim tempUnit         As unit
-    Dim strUnitAddress   As String
+    Dim dimKey                     As Long
+    Dim tempUnit                   As unit
+    Dim strUnitAddress             As String
 
     dimKey = getDimKey(propKey)
 
@@ -181,12 +192,12 @@ End Function
 
 Private Function getUnitsCollectionFromXML(Optional redefPaths As Boolean = False) As collection
 
-    Dim objXml           As MSXML2.DOMDocument
-    Dim unitList         As MSXML2.IXMLDOMNodeList
-    Dim unit             As MSXML2.IXMLDOMElement
-    Dim itemIndex        As Integer
-    Dim tempUnit         As unit
-    Dim unitCol          As collection
+    Dim objXml                     As MSXML2.DOMDocument
+    Dim unitList                   As MSXML2.IXMLDOMNodeList
+    Dim unit                       As MSXML2.IXMLDOMElement
+    Dim itemIndex                  As Integer
+    Dim tempUnit                   As unit
+    Dim unitCol                    As collection
 
     Set objXml = New MSXML2.DOMDocument
 
