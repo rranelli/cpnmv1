@@ -11,17 +11,17 @@ Option Explicit
 '12/13/2012  - Emissão inicial
 '=======================================================================================
 '
-Private Const propRow                             As Long = 3
-Private Const itemColumn                          As Long = 2
-Private Const keyColumn                           As Long = 1
-Private Const unitRow                             As Long = 5
-Private Const startingColumn                      As Long = 3
-Private Const startingRow                         As Long = 6
+Private Const propRow              As Long = 3
+Private Const itemColumn           As Long = 2
+Private Const keyColumn            As Long = 1
+Private Const unitRow              As Long = 5
+Private Const startingColumn       As Long = 3
+Private Const startingRow          As Long = 6
 
 Public Sub uploadDataWithTimer()
     Call wrapSetUpConnection
-    
-    Dim myTimer                                   As obTimer
+
+    Dim myTimer                    As obTimer
     Set myTimer = New obTimer
 
     ' Abrindo a conexão com o banco de dados.
@@ -49,24 +49,24 @@ Public Sub uploadDataWithTimer()
 End Sub
 
 Private Sub uploadDataToDatabase()
-    ' This sub exports data from the active worksheet into the database
-    Dim c                                         As Long
-    Dim r                                         As Long
-    Dim itemKey                                   As Long
-    Dim propKey                                   As Long
-    Dim valueKey                                  As Long
-    Dim strItemName                               As String
-    Dim strSubArea                                As String
-    Dim strItemType                               As String
-    Dim strPropName                               As String
-    Dim strInsertValue                            As String
-    Dim strInsertUnit                             As String
-    Dim strSharedAddress                          As String
-    Dim anomalySentinel                           As Boolean
-    Dim sharedCollection                          As collection
+' This sub exports data from the active worksheet into the database
+    Dim c                          As Long
+    Dim r                          As Long
+    Dim itemKey                    As Long
+    Dim propKey                    As Long
+    Dim valueKey                   As Long
+    Dim strItemName                As String
+    Dim strSubArea                 As String
+    Dim strItemType                As String
+    Dim strPropName                As String
+    Dim strInsertValue             As String
+    Dim strInsertUnit              As String
+    Dim strSharedAddress           As String
+    Dim anomalySentinel            As Boolean
+    Dim sharedCollection           As collection
 
     ' initial definitions
-    'On Error GoTo uploadDataToDatabase_Error
+    On Error GoTo uploadDataToDatabase_Error
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
     Set sharedCollection = New collection
@@ -143,27 +143,27 @@ uploadDataToDatabase_Finally:
 
     ' Procedure Error Handler
 uploadDataToDatabase_Error:
-    Dim errorAction                               As Integer
+    Dim errorAction                As Integer
     'here goes your specific error handling code.
 
     ' here comes the generic global error handling code.
     errorAction = handleMyError()
     Select Case errorAction
-        Case -1
-            Stop
-        Case 1
-            Resume Next
-        Case 2
-            GoTo uploadDataToDatabase_Finally
-        Case Else
-            Stop
+    Case -1
+        Stop
+    Case 1
+        Resume Next
+    Case 2
+        GoTo uploadDataToDatabase_Finally
+    Case Else
+        Stop
     End Select
 End Sub
 
 Public Sub importDataWithTimer()
     Call wrapSetUpConnection
-    
-    Dim myTimer                                   As obTimer
+
+    Dim myTimer                    As obTimer
     Set myTimer = New obTimer
 
     ' Opening the connection
@@ -193,24 +193,27 @@ End Sub
 
 Private Sub importDataFromDatabase()
 
-    Dim c                                         As Long
-    Dim r                                         As Long
-    Dim itemKey                                   As Long
-    Dim unitKey                                   As Long
-    Dim propKey                                   As Long
-    Dim strItemName                               As String
-    Dim strPropName                               As String
-    Dim strAddress                                As String
-    Dim strInsertValue                            As String
-    Dim strUnitName                               As String
+    Dim c                          As Long
+    Dim r                          As Long
+    Dim itemKey                    As Long
+    Dim unitKey                    As Long
+    Dim propKey                    As Long
+    Dim strItemName                As String
+    Dim strPropName                As String
+    Dim strAddress                 As String
+    Dim strInsertValue             As String
+    Dim strUnitName                As String
+    Dim strBigDataArray(50000, 1000) As String
+
 
     ' validando as itemKeys e criando os items que precisam ser criados.
     Call validateItems(False)
 
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
-    
+
     Do While Cells(r, itemColumn).Formula <> Empty                   ' repeat until first empty cell in column c
+        c = startingColumn                                           ' go back to starting column
         Do While Cells(propRow, c).Formula <> Empty                  ' repeat until first empty cell in row r
             ' Getting Information for data export
 
@@ -230,30 +233,33 @@ Private Sub importDataFromDatabase()
             If Err = 0 Then
                 If itemKey <> Cells(r, 1).value Then
                     MsgBox "O nome do seu item " & strItemName & " não corresponde à chave primaria guardada"
-                    
+
                     Exit Sub
                 End If
 
                 On Error GoTo 0
                 strAddress = createAddress(itemKey, propKey, unitKey, 1)
                 strInsertValue = getData(strAddress, False)
-                Cells(r, c).value = strInsertValue
+                strBigDataArray(r, c) = strInsertValue
+                'Cells(r, c).value = strInsertValue
             End If
 
             c = c + 1                                                ' next column
         Loop
 
         r = r + 1                                                    ' next row
-        c = startingColumn                                           ' go back to starting column
     Loop
+
+    Range(Cells(startingRow, startingColumn), Cells(r - 1, c - 1)).value = strBigDataArray
+
     Exit Sub
 End Sub
 
 Public Sub deleteRow()
-    ' This sub deletes the row of the item
+' This sub deletes the row of the item
     Call wrapSetUpConnection
-    
-    Dim confirm                                   As Variant
+
+    Dim confirm                    As Variant
 
     ' checking if he can actually delete this line
     If ActiveCell.row < 6 Then
@@ -269,14 +275,14 @@ Public Sub deleteRow()
 End Sub
 
 Private Sub validateItems(Optional createItems As Boolean = True)
-    Dim c                                         As Long
-    Dim r                                         As Long
-    Dim itemKey                                   As Long
-    Dim strItemType                               As String
-    Dim strSubArea                                As String
-    Dim strItemName                               As String
+    Dim c                          As Long
+    Dim r                          As Long
+    Dim itemKey                    As Long
+    Dim strItemType                As String
+    Dim strSubArea                 As String
+    Dim strItemName                As String
 
-    Dim check                                     As Variant
+    Dim check                      As Variant
 
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
@@ -335,7 +341,7 @@ Private Sub validateItems(Optional createItems As Boolean = True)
 End Sub
 
 Public Sub wrapSetUpConnection()
-    ' This sub creates the connection to the database
+' This sub creates the connection to the database
     Call initializeCPNM
 
     If Not gCnn Is Nothing Then
@@ -364,19 +370,19 @@ Public Sub resetConnection()
 End Sub
 
 Public Sub dumpItemsByType()
-    Dim rs                                        As Recordset
-    Dim strSQL                                    As String
-    Dim row                                       As Integer
-    Dim itemTypeName                              As String
-    Dim itemTypeKey                               As Long
+    Dim rs                         As Recordset
+    Dim strSQL                     As String
+    Dim row                        As Integer
+    Dim itemTypeName               As String
+    Dim itemTypeKey                As Long
 
     itemTypeName = Cells(1, 5).Text
     itemTypeKey = getItemTypeKey(itemTypeName)
 
     Set rs = New Recordset
     strSQL = "select [CHT-CPNM].[dbo].[ITEM].[ID_ITEM], [CHT-CPNM].[dbo].[ITEM].[NOME_ITEM] from [CHT-CPNM].[dbo].[ITEM] " & _
-    " where [CHT-CPNM].[dbo].[ITEM].[ID_TIPO_ITEM] = " & itemTypeKey & " AND [CHT-CPNM].[dbo].[ITEM].[ID_SUB_ARE] = " & getSubAreaKey(Cells(1, 3).value)
-    
+             " where [CHT-CPNM].[dbo].[ITEM].[ID_TIPO_ITEM] = " & itemTypeKey & " AND [CHT-CPNM].[dbo].[ITEM].[ID_SUB_ARE] = " & getSubAreaKey(Cells(1, 3).value)
+
     rs.Open strSQL, gCnn
 
     row = startingRow
@@ -390,12 +396,12 @@ End Sub
 
 Public Sub dumpInstrumentos()
     Call wrapSetUpConnection
-    
-    Dim rs                                        As Recordset
-    Dim strSQL                                    As String
-    Dim row                                       As Integer
-    Dim itemTypeName                              As String
-    Dim itemTypeKey                               As Long
+
+    Dim rs                         As Recordset
+    Dim strSQL                     As String
+    Dim row                        As Integer
+    Dim itemTypeName               As String
+    Dim itemTypeKey                As Long
 
     Set rs = New Recordset
     strSQL = "select ID_ITEM, NOME_ITEM from ITEM inner join TIPO_ITEM on ITEM.ID_TIPO_ITEM = TIPO_ITEM.ID_TIPO_ITEM where ID_CLASSE_TIPO_ITEM = 2"    '2 é a chave da classe instrumentos
@@ -411,27 +417,27 @@ Public Sub dumpInstrumentos()
 End Sub
 
 Public Sub runDiagnose()
-    Dim folderPath                                As String
-    Dim strWbName                                 As String
-    Dim strConcat                                 As String
-    Dim propRow                                   As Integer
-    Dim startCol                                  As Integer
-    Dim col                                       As Integer
-    Dim row                                       As Integer
-    Dim thisKey                                   As Variant
-    Dim itemTypeCol                               As Integer
-    Dim itemTypeRow                               As Integer
-    Dim reportRowStart                            As Integer
-    Dim thisWorksheet                             As Worksheet
-    Dim thisWorkbook                              As Workbook
-    Dim reportWorksheet                           As Worksheet
-    Dim thisPropName                              As String
-    Dim thisItemTypeName                          As String
-    Dim strLog                                    As String
-    Dim uploadDic                                 As Dictionary
-    Dim varWorksheet                              As Variant
-    Dim splitz                                    As Variant
-    Dim startRow                                  As Integer
+    Dim folderPath                 As String
+    Dim strWbName                  As String
+    Dim strConcat                  As String
+    Dim propRow                    As Integer
+    Dim startCol                   As Integer
+    Dim col                        As Integer
+    Dim row                        As Integer
+    Dim thisKey                    As Variant
+    Dim itemTypeCol                As Integer
+    Dim itemTypeRow                As Integer
+    Dim reportRowStart             As Integer
+    Dim thisWorksheet              As Worksheet
+    Dim thisWorkbook               As Workbook
+    Dim reportWorksheet            As Worksheet
+    Dim thisPropName               As String
+    Dim thisItemTypeName           As String
+    Dim strLog                     As String
+    Dim uploadDic                  As Dictionary
+    Dim varWorksheet               As Variant
+    Dim splitz                     As Variant
+    Dim startRow                   As Integer
 
     propRow = 3                                                      'estes dois parametros são de configuração para a leitura das planilhas
     startCol = 3

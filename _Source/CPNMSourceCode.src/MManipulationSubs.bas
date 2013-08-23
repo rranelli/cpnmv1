@@ -425,10 +425,8 @@ Public Sub createProperty(strPropName As String, strPropClassName As String, str
         strSQL = "INSERT INTO [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES](NOME_TIPO_PROP, ID_DIMENSAO, ID_CLASSE_TIPO_PROP, PROP_CALCULADA) VALUES ('" & strPropName & "'," & getDimKeyFromDimName(strDimName) & _
                  "," & getPropClassKey(strPropClassName) & "," & isCalc & ");"
     End If
-    On Error Resume Next
+
     gCnn.Execute strSQL
-    On Error GoTo 0
-    
 End Sub
 
 Public Sub createItemType(strItemTypeName As String, strItemTypeClassName As String)
