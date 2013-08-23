@@ -66,7 +66,7 @@ Private Sub uploadDataToDatabase()
     Dim sharedCollection                          As collection
 
     ' initial definitions
-    On Error GoTo uploadDataToDatabase_Error
+    'On Error GoTo uploadDataToDatabase_Error
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
     Set sharedCollection = New collection
