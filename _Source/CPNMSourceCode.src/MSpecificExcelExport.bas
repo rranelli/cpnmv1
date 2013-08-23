@@ -204,10 +204,11 @@ Private Sub importDataFromDatabase()
     Dim strInsertValue             As String
     Dim strUnitName                As String
     Dim strBigDataArray(50000, 1000) As String
-
+    Dim bigDataDictionary          As Dictionary
 
     ' validando as itemKeys e criando os items que precisam ser criados.
     Call validateItems(False)
+    Set bigDataDictionary = getDataDictionary
 
     c = startingColumn                                               ' the start column in the worksheet
     r = startingRow                                                  ' the start row in the worksheet
@@ -224,33 +225,22 @@ Private Sub importDataFromDatabase()
             strPropName = Cells(propRow, c).Text
             strUnitName = Cells(unitRow, c).Text
 
-            ' getting the keys from the names;
+
+            strAddress = makeUniquePair(strItemName, strPropName)
+            
             On Error Resume Next
-            itemKey = getItemKey(strItemName)
-            propKey = getPropKey(strPropName)
-            unitKey = getUnitKey(strPropName, strUnitName)
-
-            If Err = 0 Then
-                If itemKey <> Cells(r, 1).value Then
-                    MsgBox "O nome do seu item " & strItemName & " não corresponde à chave primaria guardada"
-
-                    Exit Sub
-                End If
-
-                On Error GoTo 0
-                strAddress = createAddress(itemKey, propKey, unitKey, 1)
-                strInsertValue = getData(strAddress, False)
-                strBigDataArray(r, c) = strInsertValue
-                'Cells(r, c).value = strInsertValue
-            End If
-
+            strInsertValue = bigDataDictionary(strAddress)
+            Cells(r, c).value = strInsertValue
+            'strBigDataArray(r, c) = strInsertValue
+            On Error GoTo 0
+            
             c = c + 1                                                ' next column
         Loop
 
         r = r + 1                                                    ' next row
     Loop
 
-    Range(Cells(startingRow, startingColumn), Cells(r - 1, c - 1)).value = strBigDataArray
+    'Range(Cells(startingRow, startingColumn), Cells(r - 1, c - 1)).value = strBigDataArray
 
     Exit Sub
 End Sub
@@ -504,3 +494,41 @@ Public Sub runDiagnose()
 
     Debug.Print strLog
 End Sub
+
+Public Function getDataDictionary() As Dictionary
+    Dim rs                         As Recordset
+    Dim strSQL                     As String
+    Dim thisAddress                As String
+    Dim hashLove                   As Dictionary
+
+    Set hashLove = New Dictionary
+    Set rs = New Recordset
+    rs.CursorLocation = adUseClient
+
+    strSQL = "select " & _
+             "ITEM.NOME_ITEM, " & _
+             "TIPO_PROPRIEDADES.NOME_TIPO_PROP, " & _
+             "VALOR_PROPRIEDADES.VALOR_PROP " & _
+             "from " & _
+             "LINK_VALORES inner join VALOR_PROPRIEDADES " & _
+             "on LINK_VALORES.ID_VALOR = VALOR_PROPRIEDADES.ID_VALOR " & _
+             "inner join TIPO_PROPRIEDADES " & _
+             "on LINK_VALORES.ID_TIPO_PROP = TIPO_PROPRIEDADES.ID_TIPO_PROP " & _
+             "inner join ITEM " & _
+             "on ITEM.ID_ITEM = LINK_VALORES.ID_ITEM "
+
+    rs.Open strSQL, gCnn
+
+    Do While Not rs.EOF
+        thisAddress = makeUniquePair(rs.Fields("NOME_ITEM").value, rs.Fields("NOME_TIPO_PROP").value)
+        Call hashLove.Add(thisAddress, rs.Fields("VALOR_PROP").value)
+
+        rs.MoveNext
+    Loop
+
+    Set getDataDictionary = hashLove
+End Function
+
+Public Function makeUniquePair(itemName As String, propName As String)
+    makeUniquePair = itemName & "$!%&%!$" & propName
+End Function
