@@ -84,7 +84,6 @@ Private Sub uploadDataToDatabase()
     r = startingRow                                                  ' the start row in the worksheet
 
     Do While Cells(r, keyColumn).Formula <> Empty                    ' repeat until first empty cell in column c
-        If Cells(r, 155).Text = "x" Then r = r + 1
         Do While Cells(propRow, c).Formula <> Empty                  ' repeat until first empty cell in row r
             If Cells(propRow + 1, c) <> 1 Then
                 ' Getting Information for data export

@@ -12,6 +12,7 @@ objWorkbook.Saveas saveaddress, 55
 
 objExcel.Application.Quit
 
+
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.xlam"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.dotm"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.xla"
