@@ -12,9 +12,9 @@ objWorkbook.Saveas saveaddress, 55
 
 objExcel.Application.Quit
 
-
+on error resume next
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.xlam"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.dotm"
+objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.dvb"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.xla"
-objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.dvb"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.vst"
