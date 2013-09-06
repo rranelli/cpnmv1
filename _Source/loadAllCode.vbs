@@ -18,3 +18,4 @@ objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\_CPNM.dvb"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.xla"
 objShell.Run "git update-index --assume-unchanged " & currentDirectory & "\sourceTools.vst"
+on error goto 0
