@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private txbNewValue1     As TextBox
 Private txbNewValue2     As TextBox
 Dim objShareQueue        As shareQueue
