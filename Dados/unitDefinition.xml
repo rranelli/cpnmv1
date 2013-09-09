@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <unitDefinition>
-
+	<unit>
+		<symbol>Nm</symbol>
+		<convFactor>1</convFactor>
+		<convOffset>0</convOffset>
+		<dimension>21</dimension>
+		<key>1</key>
+	</unit>
+	
 	<unit>
 		<symbol>atm</symbol>
 		<convFactor>10137</convFactor>
@@ -530,5 +537,5 @@
 		<convOffset>0</convOffset>
 		<dimension>18</dimension>
 		<key>3</key>
-	</unit>
+	</unit>	
 </unitDefinition>
