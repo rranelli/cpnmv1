@@ -90,7 +90,7 @@ Public Function defineDatabaseConnection(Optional promptOption As Integer = 1) A
 
     Set cnn = New ADODB.Connection
 
-    strConnect = "Provider=sqloledb;" _
+    strConnect = "Provider=SQLNCLI10;" _
                & "Database=CHT-CPNM;" _
                & "Server=WSP-I02-V; " _
                & "DataTypeCompatibility=80;" _
