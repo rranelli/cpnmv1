@@ -28,10 +28,10 @@ Sub cleanUpWholeDocument(Optional showMsgBoxes As Boolean = True)
     Dim splitz                                    As Variant
     Dim dummy                                     As Variant
     Dim element                                   As Variant
-    Dim docVarsInDocument                         As Collection
+    Dim docVarsInDocument                         As collection
 
     ' This part cleans up the document of docvariables which do not appear in the text
-    Set docVarsInDocument = New Collection
+    Set docVarsInDocument = New collection
     strReport = "I Deleted the following docvariables, with the following value: "
 
     For Each fieldz In ActiveDocument.Fields
@@ -97,7 +97,7 @@ End Sub
 
 Private Sub getDocVarsFromDatabase(Optional showMsgBoxes As Boolean = True)
     ' This sub gets data from the database
-    Dim colDictionary                             As Collection
+    Dim colDictionary                             As collection
     Dim problemCount                              As Integer
     Dim docVarz                                   As Variant
     Dim valueToDocVar                             As String
@@ -106,7 +106,7 @@ Private Sub getDocVarsFromDatabase(Optional showMsgBoxes As Boolean = True)
 
     On Error GoTo getDocVarsFromDatabase_Error
 
-    Set colDictionary = New Collection
+    Set colDictionary = New collection
 
     ' First, I will add all docVariables which are not created
     Call createTheNonExistanteDocVars
@@ -168,7 +168,7 @@ Public Sub createReference(strItemName As String, strPropName As String, _
     Dim unitKey                                   As Long
     Dim dummy                                     As Variant
     Dim strNewAddress                             As String
-    Dim colDictionary                             As Collection
+    Dim colDictionary                             As collection
     Dim itemTrackingPropKey                       As String
 
     Debug.Assert Application.Name = "Microsoft Word"
@@ -383,13 +383,13 @@ Sub populateOriginalItem(cmbOriginalItemName, Optional strItemClass As String, _
     Dim bolSentinel                               As Boolean
     Dim docVarz                                   As Variant
     Dim element                                   As Variant
-    Dim itemNameCol                               As Collection
+    Dim itemNameCol                               As collection
 
     ' Here, I put the connect string
     On Error GoTo populateOriginalItem_Error
 
     ' Initiating the itemName collection, which will be used to populate the combo.
-    Set itemNameCol = New Collection
+    Set itemNameCol = New collection
 
     ' getting the filtered keys
     If strItemClass <> "" Then itemClassKeyDesired = getItemClassKey(strItemClass)

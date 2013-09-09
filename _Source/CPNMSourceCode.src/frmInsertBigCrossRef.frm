@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private txbNewValue      As TextBox                                  'This is just a fix. Without it, I cant use the lump of code.
 Private refOption        As Integer
 

@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private Sub userform_initialize()
 ' populando para a aba de referência a valor
     Call populateItemType(ltbItemType)
