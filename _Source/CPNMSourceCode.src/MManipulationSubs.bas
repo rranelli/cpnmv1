@@ -419,8 +419,14 @@ Public Sub createProperty(strPropName As String, strPropClassName As String, str
     rs.CursorLocation = adUseClient
 
     If strPropName <> "" And strPropClassName <> "" Then
-        strSQL = "INSERT INTO [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES](NOME_TIPO_PROP, ID_DIMENSAO, ID_CLASSE_TIPO_PROP, PROP_CALCULADA) VALUES ('" & strPropName & "'," & getDimKeyFromDimName(strDimName) & _
+        If checkPropertyExistance(strPropName) = False Then
+            strSQL = "INSERT INTO [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES](NOME_TIPO_PROP, ID_DIMENSAO, ID_CLASSE_TIPO_PROP, PROP_CALCULADA) VALUES ('" & strPropName & "'," & getDimKeyFromDimName(strDimName) & _
                  "," & getPropClassKey(strPropClassName) & "," & isCalc & ");"
+        Else
+             strSQL = "UPDATE [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES] SET ID_DIMENSAO = " & getDimKeyFromDimName(strDimName) & _
+                    ", ID_CLASSE_TIPO_PROP = " & getPropClassKey(strPropClassName) & ", PROP_CALCULADA = " & isCalc & _
+                    " WHERE NOME_TIPO_PROP = '" & strPropName & "';"
+        End If
     End If
 
     gCnn.Execute strSQL

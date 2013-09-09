@@ -503,3 +503,21 @@ Public Sub populateAllItems(cmbItemName)
         rs.MoveNext
     Loop
 End Sub
+
+Public Function checkPropertyExistance(strPropName) As Boolean
+    Dim rs As ADODB.Recordset
+    Dim strSQL As String
+    
+    Set rs = New ADODB.Recordset
+    rs.CursorLocation = adUseClient
+
+    strSQL = "select * from TIPO_PROPRIEDADES where NOME_TIPO_PROP = '" & strPropName & "'"
+
+    rs.Open strSQL, gCnn
+    
+    If rs.EOF Then
+        checkPropertyExistance = False
+    Else
+        checkPropertyExistance = True
+    End If
+End Function
