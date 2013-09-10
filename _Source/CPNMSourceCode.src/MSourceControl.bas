@@ -1,4 +1,4 @@
-Attribute VB_Name = "MSourceControl1"
+Attribute VB_Name = "MSourceControl"
 Public Sub ExportModules()
 
     Dim bExport As Boolean

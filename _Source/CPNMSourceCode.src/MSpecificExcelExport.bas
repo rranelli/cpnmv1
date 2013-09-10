@@ -13,9 +13,11 @@ Option Explicit
 '
 Private Const propRow              As Long = 3
 Private Const itemColumn           As Long = 2
+Private Const itemTypeColumn       As Long = 3
+Private Const itemStatusColumn     As Long = 4
 Private Const keyColumn            As Long = 1
 Private Const unitRow              As Long = 5
-Private Const startingColumn       As Long = 3
+Private Const startingColumn       As Long = 5
 Private Const startingRow          As Long = 6
 
 Public Sub uploadDataWithTimer()
@@ -227,13 +229,13 @@ Private Sub importDataFromDatabase()
 
 
             strAddress = makeUniquePair(strItemName, strPropName)
-            
+
             On Error Resume Next
             strInsertValue = bigDataDictionary(strAddress)
             Cells(r, c).value = strInsertValue
             'strBigDataArray(r, c) = strInsertValue
             On Error GoTo 0
-            
+
             c = c + 1                                                ' next column
         Loop
 
@@ -532,3 +534,58 @@ End Function
 Public Function makeUniquePair(itemName As String, propName As String)
     makeUniquePair = itemName & "$!%&%!$" & propName
 End Function
+
+' ####################
+' Bulk changes
+' ####################
+
+Public Sub BulkChangeItemName_Export()
+    Dim itemKey                    As Long
+    Dim newItemName                As String
+    Dim i                          As Integer
+
+    i = startingRow
+
+    Do While ActiveSheet.Cells(i, 1).Text <> ""
+        itemKey = ActiveSheet.Cells(i, keyColumn).value
+        newItemName = ActiveSheet.Cells(i, itemColumn).Text
+
+        Call changeItemNameByKey(itemKey, newItemName)
+
+        i = i + 1
+    Loop
+End Sub
+
+Public Sub BulkChangeItemType_Export()
+    Dim itemName                   As String ' CUIDADO ! Aqui eu uso o nome do item para trocar o tipo!
+    Dim newItemTypeName            As String
+    Dim i                          As Integer
+
+    i = startingRow
+
+    Do While ActiveSheet.Cells(i, itemColumn).Text <> ""
+        itemKey = ActiveSheet.Cells(i, keyColumn).value
+        newItemTypeName = ActiveSheet.Cells(i, itemTypeColumn).Text
+
+        Call changeItemTypeByKey(itemKey, newItemTypeName)
+
+        i = i + 1
+    Loop
+End Sub
+
+Public Sub BulkChangeItemActiveStatus_Export()
+    Dim itemKey                    As Long
+    Dim i                          As Integer
+    Dim IsActive                   As Integer
+
+    i = startingRow
+
+    Do While ActiveSheet.Cells(i, itemColumn).Text <> ""
+        itemKey = ActiveSheet.Cells(i, keyColumn).value
+        IsActive = ActiveSheet.Cells(i, itemStatusColumn).value
+
+        Call changeItemActiveStatusByKey(itemKey, IsActive)
+
+        i = i + 1
+    Loop
+End Sub

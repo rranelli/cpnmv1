@@ -421,11 +421,11 @@ Public Sub createProperty(strPropName As String, strPropClassName As String, str
     If strPropName <> "" And strPropClassName <> "" Then
         If checkPropertyExistance(strPropName) = False Then
             strSQL = "INSERT INTO [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES](NOME_TIPO_PROP, ID_DIMENSAO, ID_CLASSE_TIPO_PROP, PROP_CALCULADA) VALUES ('" & strPropName & "'," & getDimKeyFromDimName(strDimName) & _
-                 "," & getPropClassKey(strPropClassName) & "," & isCalc & ");"
+                     "," & getPropClassKey(strPropClassName) & "," & isCalc & ");"
         Else
-             strSQL = "UPDATE [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES] SET ID_DIMENSAO = " & getDimKeyFromDimName(strDimName) & _
-                    ", ID_CLASSE_TIPO_PROP = " & getPropClassKey(strPropClassName) & ", PROP_CALCULADA = " & isCalc & _
-                    " WHERE NOME_TIPO_PROP = '" & strPropName & "';"
+            strSQL = "UPDATE [CHT-CPNM].[dbo].[TIPO_PROPRIEDADES] SET ID_DIMENSAO = " & getDimKeyFromDimName(strDimName) & _
+                     ", ID_CLASSE_TIPO_PROP = " & getPropClassKey(strPropClassName) & ", PROP_CALCULADA = " & isCalc & _
+                     " WHERE NOME_TIPO_PROP = '" & strPropName & "';"
         End If
     End If
 
@@ -445,33 +445,57 @@ Public Sub createItemType(strItemTypeName As String, strItemTypeClassName As Str
     End If
 End Sub
 
-Public Sub changeItemType(itemName As String, newItemTypeName As String)
-    Dim strSQL                     As String
-    Dim newItemTypeKey             As Long
+'##############
+' Changing Subs
+'##############
 
-    If newItemTypeName <> "" Then
+Public Sub changeItemTypeByKey(itemKey As Long, newItemTypeKey As String)
+    Dim strSQL                     As String
+
+    strSQL = "UPDATE ITEM SET ID_TIPO_ITEM = " & newItemTypeKey & " where ID_ITEM = " & itemKey & ";"
+
+    gCnn.Execute strSQL
+End Sub
+
+Public Sub changeItemType(itemName As String, newItemTypeName As String)
+    Dim newItemTypeKey             As Long
+    Dim itemKey                    As Long
+
+    If newItemTypeName <> "" And itemName <> "" Then
+        itemKey = getItemKey(itemName)
         newItemTypeKey = getItemTypeKey(newItemTypeName)
-        strSQL = "UPDATE ITEM SET ID_TIPO_ITEM = " & newItemTypeKey & " where NOME_ITEM = '" & itemName & "';"
+
+        Call changeItemTypeByKey(itemKey, newItemTypeKey)
+    End If
+End Sub
+
+Public Sub changeItemNameByKey(itemKey As Long, newItemName As String)
+    Dim strSQL                     As String
+
+    If newItemName <> "" Then
+        strSQL = "UPDATE ITEM set NOME_ITEM = '" & newItemName & "' where ID_ITEM = " & itemKey & ";"
 
         gCnn.Execute strSQL
     End If
 End Sub
 
 Public Sub changeItemName(itemName As String, newItemName As String)
-    Dim strSQL                     As String
-
-    If newItemName <> "" Then
-        strSQL = "UPDATE ITEM set NOME_ITEM = '" & newItemName & "' where NOME_ITEM = '" & itemName & "';"
-
-        gCnn.Execute strSQL
-    End If
+    Dim itemKey                    As Long
+    itemKey = getItemKey(itemName)
+    Call changeItemNameByKey(itemKey, newItemName)
 End Sub
 
-Public Sub changeItemActiveStatus(itemName As String, IsActive As Integer)
+Public Sub changeItemActiveStatusByKey(itemKey As Long, IsActive As Integer)
     Dim activeStatus               As Integer
     Dim strSQL                     As String
 
-    strSQL = "UPDATE ITEM SET ATIVO = " & IsActive & " where NOME_ITEM = '" & itemName & "';"
+    strSQL = "UPDATE ITEM SET ATIVO = " & IsActive & " where ID_ITEM = " & itemKey & ";"
 
     gCnn.Execute strSQL
+End Sub
+
+Public Sub changeItemActiveStatus(itemName As String, IsActive As Integer)
+    Dim itemKey                    As Long
+    itemKey = getItemKey(itemName)
+    Call changeItemActiveStatusByKey(itemKey, IsActive)
 End Sub
