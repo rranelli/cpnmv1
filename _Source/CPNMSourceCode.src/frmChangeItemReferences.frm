@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Private Sub btnBatchIt_Click()
     Me.Hide
     frmChangeBatch.Show

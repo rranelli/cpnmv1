@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 ' Initializing the userform
 Private Sub userform_initialize()
     Call populatePropClass(cmbPropTypeClass)
